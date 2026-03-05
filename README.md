@@ -1,137 +1,133 @@
-# MetaCall FaaS — UI Dashboard
+# MetaCall FaaS Dashboard
 
-A local developer dashboard for the [MetaCall FaaS](https://github.com/metacall/faas) platform, built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**.
+**A modern, local developer dashboard for the [MetaCall FaaS](https://github.com/metacall/faas) platform.**
 
-It lets you deploy, inspect, invoke, and observe your MetaCall functions — all from a clean web interface running alongside the local FaaS server.
-
----
+Deploy, inspect, invoke, and observe your polyglot serverless functions locally—all from a clean, intuitive web interface that runs right alongside your local FaaS server.
 
 ## Features
 
-| Area | What you can do |
-|---|---|
-| **Dashboard** | Live server-status indicator, deployment summary, quick-action cards |
-| **Deployments** | Table of all active deployments with status badges and per-function drill-down |
-| **Deploy Hub** | Choose between package upload or Git repository deployment |
-| **Package Wizard** | Step-by-step wizard — drag-and-drop ZIP → validate → deploy |
-| **Repository Deploy** | Clone a GitHub/GitLab repo, pick a branch, deploy with one click |
-| **Deployment Detail** | Browse all exposed functions, invoke them live with the built-in tester |
-| **Logs Viewer** | Real-time log streaming per deployment, auto-scroll, copy support |
-| **Settings** | Server URL, auth token, environment configuration |
-| **Plans** | Subscription plan overview (billing mock) |
-| **Assistant** | Floating AI chat panel |
+- **Live Dashboard**: Real-time server status indicator, deployment summaries, and at-a-glance metrics.
+- **Deploy Hub**: Flexible deployment options including Drag-and-Drop ZIP uploads or direct Git repository cloning.
+- **Package Wizard**: Step-by-step guidance from package selection to validation and final deployment.
+- **Repository Deploy**: One-click deployments directly from your GitHub or GitLab branches.
+- **Deployment Details**: Deep dive into active deployments with status badges, exposed function browsing, and an integrated tester.
+- **Live Invocation**: Invoke your polyglot functions directly from the browser with JSON arguments and instantly see the results.
+- **Logs Viewer**: Real-time log streaming per deployment with auto-scrolling and easy copy functionality.
+- **Configuration**: Easily manage server URLs, authentication tokens, and environment settings.
 
 ---
 
 ## Tech Stack
 
-| | |
-|---|---|
-| **Framework** | React  |
-| **Language** | TypeScript  |
-| **Bundler** | Vite |
-| **Styling** | Tailwind CSS |
-| **Routing** | React Router |
-| **Icons** | Lucide React |
-| **HTTP** | Axios |
-| **Auth** | JWT via `localStorage` |
+Built with a modern, high-performance web stack to ensure a seamless developer experience:
+
+- **Frontend Framework**: [React](https://react.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Build Tool / Bundler**: [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Routing**: [React Router](https://reactrouter.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **API Client**: [Axios](https://axios-http.com/)
+- **State & Auth**: JWT via `localStorage`
 
 ---
 
 ## Getting Started
 
+Follow these steps to get your local FaaS dashboard up and running.
+
 ### Prerequisites
 
-- Node.js ≥ 20.1.0
-- npm ≥ 10.0.0
-- A running MetaCall FaaS server (default: `http://localhost:9000`)
+Ensure you have the following installed on your local machine:
+- **Node.js**: `≥ 20.1.0`
+- **npm**: `≥ 10.0.0`
+- **Backend Service**: A running instance of the [MetaCall FaaS Server](https://github.com/metacall/faas) (usually at `http://localhost:9000`).
 
-### 1. Install dependencies
+### 1. Install Dependencies
+
+Navigate to the UI project directory and install the required npm packages:
 
 ```bash
-cd faas/ui
+cd faas_dashboard
 npm install
 ```
 
-### 2. Configure environment
+### 2. Configure the Environment
+
+Copy the example environment file to create your local configuration:
 
 ```bash
-cp .env .env.local
+cp .env.example .env.local
 ```
 
-Edit `.env.local`:
+Open `.env.local` and customize your settings if needed:
 
 ```env
-# URL of your local FaaS server
+# URL of your local MetaCall FaaS server
 VITE_FAAS_URL=http://localhost:9000
 
-# Optional: pre-set a JWT token so you skip the login screen in dev
+# Optional: Set a JWT token to bypass the login screen during development
 VITE_FAAS_TOKEN=<your-jwt-token>
 ```
 
-### 3. Start the dev server
+### 3. Start the Development Server
+
+Launch the Vite development server with Hot Module Replacement (HMR):
 
 ```bash
 npm run dev
 ```
 
-The UI will be available at **http://localhost:5173**.
-
-> The FaaS backend must be running separately. See [`faas/README.md`](../README.md) for backend setup.
+> **Note**: The Dashboard will be accessible at **[http://localhost:5173](http://localhost:5173)**. Make sure your local FaaS backend is running independently.
 
 ---
 
 ## Available Scripts
 
 | Command | Description |
-|---|---|
-| `npm run dev` | Start the Vite dev server with HMR |
-| `npm run build` | Type-check and build for production (`dist/`) |
-| `npm run lint` | Run ESLint |
-| `npm run preview` | Serve the production build locally |
+| :--- | :--- |
+| `npm run dev` | Starts the Vite development server with HMR. |
+| `npm run build` | Type-checks the codebase and creates a production build in `dist/`. |
+| `npm run lint` | Lints the codebase using ESLint to enforce code quality. |
+| `npm run format` | Formats all source files using Prettier. |
+| `npm run test` | Runs the unit test suite via Vitest. |
+| `npm run preview` | Serves the production build locally for testing. |
 
 ---
 
 ## Project Structure
 
-```
-faas/ui/
-├── public/              # Static assets
+```text
+Dashboard/
+├── public/              # Static assets (favicons, etc.)
 ├── src/
-│   ├── api/
-│   │   └── client.ts    # Typed Axios API client (all FaaS endpoints)
-│   ├── components/
-│   │   ├── layout/      # AppShell, Navbar, Sidebar, Footer
-│   │   └── ui/          # Button, Card, Badge, Spinner, DropZone, etc.
-│   ├── hooks/           # useServerStatus, custom React hooks
-│   ├── pages/           # One file per route/page
-│   ├── types/           # Shared TypeScript types
-│   ├── App.tsx          # Router + auth guard
-│   └── main.tsx         # Entry point
-├── .env                 # Default environment variables
-├── vite.config.ts
-└── package.json
+│   ├── api/             # Typed Axios API client for all FaaS endpoints
+│   ├── components/      # Reusable UI components
+│   │   ├── layout/      # Core layout components (AppShell, Navbar, Sidebar)
+│   │   └── ui/          # Generic UI elements (Buttons, Cards, Badges, Modals)
+│   ├── hooks/           # Custom React hooks (e.g., useServerStatus)
+│   ├── pages/           # Application route components
+│   ├── types/           # Global TypeScript type definitions
+│   ├── App.tsx          # Main application router and auth guards
+│   └── main.tsx         # React application entry point
+├── .env.example         # Template for environment variables
+├── eslint.config.js     # ESLint configuration
+├── vite.config.ts       # Vite bundler configuration
+└── package.json         # Project metadata and dependency tree
 ```
 
 ---
 
-## Authentication
+## Authentication & Connectivity
 
-The UI uses **JWT bearer tokens**. On first visit you are redirected to `/login`. Tokens are stored in `localStorage` under the key `faas_token`.
-
-For local development, set `VITE_FAAS_TOKEN` in `.env.local` to skip the login screen entirely.
-
----
-
-## Connecting to the Backend
-
-All API calls go through `src/api/client.ts`. The base URL is read from `VITE_FAAS_URL` at build time. The client attaches the JWT automatically to every request.
+- **JWT Tokens:** The dashboard uses standard Bearer JWT tokens for authentication. On your first visit, you will be redirected to the `/login` route. Tokens are saved securely in your browser's `localStorage` under the key `faas_token`.
+- **Backend API:** All network requests are routed through `src/api/client.ts`. The base API URL is injected at build time via `VITE_FAAS_URL`, and the client automatically attaches the active JWT to all outgoing requests.
 
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](../../CONTRIBUTING.md) for branch conventions, code style, commit format, and the pull request process.
+We welcome contributions! Please review the [CONTRIBUTING.md](../CONTRIBUTING.md) in the root directory for details on our code of conduct, branching conventions, and the pull request submission process.
 
 ---
 
