@@ -4,6 +4,24 @@
 
 Deploy, inspect, invoke, and observe your polyglot serverless functions locally—all from a clean, intuitive web interface that runs right alongside your local FaaS server.
 
+## Preview
+
+**Login**
+![Login](assets/login.png)
+
+**Signup**
+![Signup](assets/signup.png)
+
+**Dashboard**
+![Dashboard](assets/dashboard.png)
+
+**New Deploy Page**
+![New Deploy](assets/new_deploy.png)
+
+*Small Screen*
+![Small Screen](assets/small_screen.png)
+
+
 ## Features
 
 - **Live Dashboard**: Real-time server status indicator, deployment summaries, and at-a-glance metrics.
@@ -21,14 +39,16 @@ Deploy, inspect, invoke, and observe your polyglot serverless functions locally�
 
 Built with a modern, high-performance web stack to ensure a seamless developer experience:
 
-- **Frontend Framework**: [React](https://react.dev/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Build Tool / Bundler**: [Vite](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Routing**: [React Router](https://reactrouter.com/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **API Client**: [Axios](https://axios-http.com/)
-- **State & Auth**: JWT via `localStorage`
+| Category | Technology |
+| :--- | :--- |
+| **Frontend Framework** | React |
+| **Language** | TypeScript |
+| **Build Tool / Bundler** | Vite |
+| **Styling** | Tailwind CSS |
+| **Routing** | React Router |
+| **Icons** | Lucide React |
+| **API Client** | Axios |
+| **State & Auth** | JWT via `localStorage` |
 
 ---
 
@@ -98,7 +118,7 @@ npm run dev
 ## Project Structure
 
 ```text
-Dashboard/
+faas-dashboard/
 ├── public/              # Static assets (favicons, etc.)
 ├── src/
 │   ├── api/             # Typed Axios API client for all FaaS endpoints
@@ -125,9 +145,39 @@ Dashboard/
 
 ---
 
-## Contributing
+## To-Do
+### What We Have Done
 
-We welcome contributions! Please review the [CONTRIBUTING.md](../CONTRIBUTING.md) in the root directory for details on our code of conduct, branching conventions, and the pull request submission process.
+- **Foundation Shell**: App routes, layout rendering, and design tokens applied.
+- **UI Primitives**: All shared components (buttons, cards, badges, etc.) are polished and functional.
+- **Dashboard Page**: Live server, active deployments, and function stats rendered directly from the backend.
+- **Deployments Page**: List of deployments with search, filtering, and delete with confirmation working.
+- **Deploy Wizard (mostly done)**: ZIP upload and repository cloning flows are connected.
+- **Deployment Detail**: Metadata display, function list extracting, inline tester, and improved error states.
+- **Logs & Settings**: Real-time logs endpoint is implemented along with settings persistence.
+
+### Not Done Yet
+
+#### Backend & API Integration
+- [ ] **API Integration (Highest Priority)**: Connect `src/api/client.ts` properly using `VITE_FAAS_TOKEN`.
+- [ ] **Backend Integration - Hooks**: Wire up `useDeployments`, `useLogs`, `useServerStatus` to actual `@metacall/protocol` client (replace mocks).
+- [ ] **Dashboard Page**: Aggregate real data from the FaaS server to replace mock dashboard statistics.
+- [ ] **Deployments Page**: Connect the list, search, and delete functionalities to actual backend endpoints.
+- [ ] **Backend Refactoring**: Resolve remaining protocol-type TODOs in backend controllers.
+
+#### UI & UX Polish
+- [ ] **Inline File Creation**: Implement the "MC-0" file creation tab in the Deploy Wizard for text file creation.
+- [ ] **Dynamic Zip Rebuilding**: Implement logic in `DeployWizardPage` to generate `metacall.json` dynamically and inject it into the Zip before upload.
+- [ ] **Deployment Confirmation**: Add a success confirmation page or toast notification after wizard finishes deploying.
+- [ ] **QA & Polish**: End-to-end smoke tests, finishing error state handling, and final UI transitions/hover polish.
+
+#### Documentation
+- [ ] **Documentation**: Capture application screenshots and finish final PR documentation.
+
+#### User Plan (Pending Workflow & Testing)
+- [ ] **Plan Testing**: Test the system with the user plan functionality.
+- [ ] **Plan Functions Integration**: Implement actual functions and workflows of the user plan (billing and checkout flows remain mock-only).
+
 
 ---
 
