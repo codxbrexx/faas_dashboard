@@ -11,25 +11,33 @@ export function useServerStatus(pollIntervalMs = 30_000): UseServerStatusResult 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
     const check = async () => {
-      try {
-        const isReady = await api.ready();
-        if (!cancelled) setOnline(isReady);
-      } catch {
-        if (!cancelled) setOnline(false);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+      // api.ready() has its own try/catch; check the signal after it resolves
+      const isReady = await api.ready(controller.signal);
+      if (controller.signal.aborted) return;
+      setOnline(isReady);
+      setLoading(false);
     };
 
     void check();
-    const interval = setInterval(() => void check(), pollIntervalMs);
+
+    // Only poll when the tab is active
+    const interval = setInterval(() => {
+      if (!document.hidden) void check();
+    }, pollIntervalMs);
+
+    // Immediately re-check when the user returns to the tab
+    const onVisible = () => {
+      if (!document.hidden) void check();
+    };
+    document.addEventListener('visibilitychange', onVisible);
 
     return () => {
-      cancelled = true;
+      controller.abort();
       clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisible);
     };
   }, [pollIntervalMs]);
 

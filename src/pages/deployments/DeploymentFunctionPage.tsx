@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { RefreshCw, ArrowLeft, Trash2, Box, ScrollText, Globe, Server, Layers } from 'lucide-react';
 import axios from 'axios';
 import { api } from '@/api/client';
+import { env } from '@/env';
 import type { Deployment } from '@/types';
 import { Spinner } from '@/components/ui/Spinner';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -73,10 +74,10 @@ export default function DeploymentDetailPage() {
       await api.deployDelete(deployment.prefix, deployment.suffix, deployment.version);
       navigate('/deployments');
     } catch (err: unknown) {
-      alert('Failed to delete deployment: ' + (err as Error).message);
+      setError('Failed to delete deployment: ' + ((err as Error).message ?? 'Unknown error'));
+      setShowDeleteConfirm(false);
     } finally {
       setDeleting(false);
-      setShowDeleteConfirm(false);
     }
   };
 
@@ -119,8 +120,7 @@ export default function DeploymentDetailPage() {
   }
 
   const langs = Object.keys(deployment.packages ?? {}).filter(k => k !== 'Unknown');
-  const baseUrl =
-    (import.meta.env.VITE_FAAS_URL as string | undefined) ?? 'http://localhost:9000';
+  const baseUrl = env.FAAS_URL;
   const invokePath = `${baseUrl}/${deployment.prefix}/${deployment.suffix}/${deployment.version}/call`;
   const totalFns = Object.values(deployment.packages ?? {}).reduce(
     (acc, handles) => acc + handles.reduce((a, h) => a + (h.scope?.funcs?.length ?? 0), 0),

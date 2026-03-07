@@ -55,24 +55,27 @@ function DeleteModal({
 
 export default function DeploymentsPage() {
   const navigate = useNavigate();
-  const { deployments, loading, refetch } = useDeployments();
+  const { deployments, loading, error: pollError, refetch } = useDeployments();
 
   const [pendingDelete, setPending] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  // Surface whichever error is currently active
+  const error = deleteError ?? pollError;
 
   async function handleDelete() {
     if (!pendingDelete) return;
     const dep = deployments.find(d => d.suffix === pendingDelete);
     if (!dep) return;
     setDeleting(true);
-    setError(null);
+    setDeleteError(null);
     try {
       await api.deployDelete(dep.prefix, dep.suffix, dep.version ?? 'v1');
       setPending(null);
       refetch();
     } catch {
-      setError('Delete failed — check server connection.');
+      setDeleteError('Delete failed, check server connection.');
     } finally {
       setDeleting(false);
     }
@@ -88,7 +91,7 @@ export default function DeploymentsPage() {
           onConfirm={handleDelete}
           onCancel={() => {
             setPending(null);
-            setError(null);
+            setDeleteError(null);
           }}
         />
       )}
@@ -140,7 +143,7 @@ export default function DeploymentsPage() {
             <div className="flex items-center justify-between gap-3 px-4 py-3 bg-red-50 border-l-4 border-red-500 text-sm font-semibold text-red-700 shadow-sm">
               <span>{error}</span>
               <button
-                onClick={() => setError(null)}
+                onClick={() => setDeleteError(null)}
                 className="hover:bg-red-100 p-1 transition-colors"
               >
                 <X size={16} />

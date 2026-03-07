@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Deployment } from '@/types';
 import { api } from '@/api/client';
+import { env } from '@/env';
 import { Spinner } from '@/components/ui/Spinner';
 import { ChevronDown, ChevronUp, Layers } from 'lucide-react';
 import { CopyButton } from '@/components/ui/CopyButton';
@@ -26,8 +27,7 @@ function getParamNames(func: FuncEntry): string[] {
 export function FunctionTester({ deployment }: FunctionTesterProps) {
   const [openFunc, setOpenFunc] = useState<string | null>(null);
 
-  const baseUrl =
-    (import.meta.env.VITE_FAAS_URL as string | undefined) ?? 'http://localhost:9000';
+  const baseUrl = env.FAAS_URL;
 
   const allFuncs: FuncEntry[] = Object.entries(deployment.packages ?? {}).flatMap(
     ([lang, handles]) =>
