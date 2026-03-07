@@ -260,28 +260,27 @@ export default function DeploymentDetailPage() {
             <div className="flex flex-col gap-3">
               <SectionTitle icon={<Server size={13} />} title="Configuration" />
 
+              {(deployment.ports || []).length > 0 && (
               <InfoRow label="Exposed Ports">
-                {(deployment.ports || []).length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5 mt-0.5">
-                    {deployment.ports.map(p => (
-                      <span
-                        key={p}
-                        className="px-2 py-1 bg-white border border-slate-200 text-xs font-mono font-semibold text-slate-600"
-                      >
-                        {p}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <span className="text-xs text-slate-400">No ports exposed</span>
-                )}
-              </InfoRow>
-
-              <InfoRow label="Environment">
-                <div className="bg-white border border-slate-200 px-3 py-2 text-[11px] text-slate-400 italic">
-                  Overview not available via API
+                <div className="flex flex-wrap gap-1.5 mt-0.5">
+                {deployment.ports.map(p => (
+                  <span
+                  key={p}
+                  className="px-2 py-1 bg-white border border-slate-200 text-xs font-mono font-semibold text-slate-600"
+                  >
+                  {p}
+                  </span>
+                ))}
                 </div>
               </InfoRow>
+              )}
+
+              {(deployment.ports || []).length === 0 && (
+              <div className="p-3 bg-slate-100/50 rounded border border-slate-200">
+                <p className="text-xs text-slate-500">No configuration data available</p>
+                <p className="text-[10px] text-slate-400 mt-1">Environment variables and additional settings may appear here</p>
+              </div>
+              )}
             </div>
           </div>
 

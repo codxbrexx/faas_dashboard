@@ -63,8 +63,8 @@ export const api = {
     return res.data;
   },
 
-  inspectByName: async (suffix: string): Promise<Deployment> => {
-    const all = await api.inspect();
+  inspectByName: async (suffix: string, signal?: AbortSignal): Promise<Deployment> => {
+    const all = await api.inspect(signal);
     const found = all.find(d => d.suffix === suffix);
     if (!found) throw new Error(`Deployment "${suffix}" not found`);
     return found;

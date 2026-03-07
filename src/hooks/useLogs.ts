@@ -6,6 +6,7 @@ import { api } from '@/api/client';
 interface UseLogsResult {
   logs: LogEntry[];
   loading: boolean;
+  error: string | null;
   refetch: () => void;
 }
 
@@ -76,6 +77,7 @@ function parseLogs(raw: string): LogEntry[] {
 export function useLogs(suffix: string, prefix: string, pollIntervalMs = 5000): UseLogsResult {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
   // Counts consecutive fetch failures; used to widen the retry window
   const failCountRef = useRef(0);
@@ -111,12 +113,17 @@ export function useLogs(suffix: string, prefix: string, pollIntervalMs = 5000): 
       try {
         const raw = await api.logs(suffix, prefix, 'deploy', controller.signal);
         if (controller.signal.aborted) return;
+        setError(null);
         setLogs(parseLogs(raw));
         scheduleNext(false);
       } catch (err) {
         if (axios.isCancel(err)) return;
         if (controller.signal.aborted) return;
-        // Retain stale data; widen interval before retrying
+        // Surface error to the caller and widen retry interval
+        const msg = axios.isAxiosError(err)
+          ? (err.response?.data?.error ?? err.message ?? 'Failed to load logs.')
+          : (err instanceof Error ? err.message : 'Failed to load logs.');
+        setError(msg);
         scheduleNext(true);
       } finally {
         if (!controller.signal.aborted) setLoading(false);
@@ -150,8 +157,10 @@ export function useLogs(suffix: string, prefix: string, pollIntervalMs = 5000): 
   return {
     logs,
     loading,
+    error,
     refetch: () => {
       failCountRef.current = 0;
+      setError(null);
       setTick(t => t + 1);
     },
   };

@@ -129,7 +129,7 @@ export default function DeploymentsPage() {
                 <RefreshCw size={16} />
               </button>
               <button
-                className="flex items-center gap-2 px-5 py-2.5 font-bold text-black hover:bg-gray-700 hover:text-white active:shadow-none active:translate-y-0.5 active:translate-x-0.5 transition-all"
+                className="flex items-center gap-2 px-5 py-2.5 font-bold text-black hover:bg-gray-500 hover:text-white active:shadow-none active:translate-y-0.5 active:translate-x-0.5 transition-all"
                 onClick={() => navigate('/deployments/new')}
               >
                 <Plus size={16} strokeWidth={3} />
