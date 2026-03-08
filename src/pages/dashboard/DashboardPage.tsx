@@ -127,7 +127,7 @@ interface StatCardProps {
 function StatCard({ icon, label, value, sub, trend }: StatCardProps) {
   return (
     <div className="flex items-start gap-4 bg-white border border-gray-200 px-5 py-4 flex-1 min-w-45">
-      <span className="flex items-center justify-center w-10 h-10 shrink-0 rounded-lg bg-slate-50 border border-slate-100">
+      <span className="flex items-center justify-center w-10 h-10 shrink-0 rounded-lg bg-gray-50">
         {icon}
       </span>
       <div className="flex flex-col gap-0.5 min-w-0">
@@ -185,7 +185,7 @@ function RecentDeploymentsTable({ deployments, onDelete }: { deployments: Deploy
               return (
                 <tr
                   key={dep.suffix}
-                  className="hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="hover:bg-blue-50 transition-colors cursor-pointer"
                   onClick={() => navigate(`/deployments/${dep.suffix}`)}
                 >
                   <td className="px-4 py-2.5 font-mono text-gray-700 truncate max-w-35">
@@ -274,12 +274,12 @@ export default function DashboardPage() {
           icon={
             online ? (
               <span className="relative flex items-center justify-center">
-                <Server size={20} className="text-gray-500" />
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white" />
+                <Server size={24} className="text-gray-500" />
+                {/* <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white" /> */}
               </span>
             ) : (
               <span className="relative flex items-center justify-center">
-                <WifiOff size={20} className="text-red-400" />
+                <WifiOff size={24} className="text-red-400" />
               </span>
             )
           }
@@ -288,13 +288,13 @@ export default function DashboardPage() {
           sub={online ? 'FaaS is responding' : 'Cannot reach server'}
         />
         <StatCard
-          icon={<Package size={20} className="text-gray-400" />}
+          icon={<Package size={24} className="text-gray-400" />}
           label="Active Deployments"
           value={loading ? <Spinner size={18} /> : activeDeployments}
           sub={`${deployments.length} total`}
         />
         <StatCard
-          icon={<Code2 size={20} className="text-gray-400" />}
+          icon={<Code2 size={24} className="text-gray-400" />}
           label="Functions"
           value={loading ? <Spinner size={18} /> : totalFunctions}
           sub="across all deployments"
@@ -302,7 +302,7 @@ export default function DashboardPage() {
         <StatCard
           icon={
             <span className="relative flex items-center justify-center">
-              <Layers size={20} className="text-gray-400" />
+              <Layers size={24} className="text-gray-400" />
               {emptyCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-amber-400 rounded-full border-2 border-white flex items-center justify-center text-[7px] font-bold text-white leading-none">
                   {emptyCount > 9 ? '9+' : emptyCount}

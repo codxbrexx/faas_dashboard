@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { RefreshCw, ArrowLeft, Trash2, Box, ScrollText, Globe, Server, Layers } from 'lucide-react';
 import axios from 'axios';
 import { api } from '@/api/client';
+import { env } from '@/env';
 import type { Deployment } from '@/types';
 import { Spinner } from '@/components/ui/Spinner';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -73,10 +74,10 @@ export default function DeploymentDetailPage() {
       await api.deployDelete(deployment.prefix, deployment.suffix, deployment.version);
       navigate('/deployments');
     } catch (err: unknown) {
-      alert('Failed to delete deployment: ' + (err as Error).message);
+      setError('Failed to delete deployment: ' + ((err as Error).message ?? 'Unknown error'));
+      setShowDeleteConfirm(false);
     } finally {
       setDeleting(false);
-      setShowDeleteConfirm(false);
     }
   };
 
@@ -119,8 +120,7 @@ export default function DeploymentDetailPage() {
   }
 
   const langs = Object.keys(deployment.packages ?? {}).filter(k => k !== 'Unknown');
-  const baseUrl =
-    (import.meta.env.VITE_FAAS_URL as string | undefined) ?? 'http://localhost:9000';
+  const baseUrl = env.FAAS_URL;
   const invokePath = `${baseUrl}/${deployment.prefix}/${deployment.suffix}/${deployment.version}/call`;
   const totalFns = Object.values(deployment.packages ?? {}).reduce(
     (acc, handles) => acc + handles.reduce((a, h) => a + (h.scope?.funcs?.length ?? 0), 0),
@@ -260,28 +260,27 @@ export default function DeploymentDetailPage() {
             <div className="flex flex-col gap-3">
               <SectionTitle icon={<Server size={13} />} title="Configuration" />
 
+              {(deployment.ports || []).length > 0 && (
               <InfoRow label="Exposed Ports">
-                {(deployment.ports || []).length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5 mt-0.5">
-                    {deployment.ports.map(p => (
-                      <span
-                        key={p}
-                        className="px-2 py-1 bg-white border border-slate-200 text-xs font-mono font-semibold text-slate-600"
-                      >
-                        {p}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <span className="text-xs text-slate-400">No ports exposed</span>
-                )}
-              </InfoRow>
-
-              <InfoRow label="Environment">
-                <div className="bg-white border border-slate-200 px-3 py-2 text-[11px] text-slate-400 italic">
-                  Overview not available via API
+                <div className="flex flex-wrap gap-1.5 mt-0.5">
+                {deployment.ports.map(p => (
+                  <span
+                  key={p}
+                  className="px-2 py-1 bg-white border border-slate-200 text-xs font-mono font-semibold text-slate-600"
+                  >
+                  {p}
+                  </span>
+                ))}
                 </div>
               </InfoRow>
+              )}
+
+              {(deployment.ports || []).length === 0 && (
+              <div className="p-3 bg-slate-100/50 rounded border border-slate-200">
+                <p className="text-xs text-slate-500">No configuration data available</p>
+                <p className="text-[10px] text-slate-400 mt-1">Environment variables and additional settings may appear here</p>
+              </div>
+              )}
             </div>
           </div>
 

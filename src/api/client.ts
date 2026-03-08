@@ -1,15 +1,14 @@
 import axios, { type AxiosError } from 'axios';
 import type { Deployment, Plans } from '@/types';
 
-const BASE_URL = (import.meta.env.VITE_FAAS_URL as string | undefined) ?? 'http://localhost:9000';
+const BASE_URL = (import.meta.env.VITE_FAAS_URL as string | undefined) ?? '';
 const TOKEN_KEY = 'faas_token';
 
 function getToken(): string {
-  return (
-    localStorage.getItem(TOKEN_KEY) ??
-    (import.meta.env.VITE_FAAS_TOKEN as string | undefined) ??
-    'local'
-  );
+  // Only use the token the user explicitly received from login/signup.
+  // We intentionally do NOT fall back to VITE_FAAS_TOKEN so that
+  // every session must go through the login flow.
+  return localStorage.getItem(TOKEN_KEY) ?? '';
 }
 
 function extractError(err: unknown, fallback: string): never {
@@ -17,10 +16,13 @@ function extractError(err: unknown, fallback: string): never {
   throw new Error(serverMsg ?? (err instanceof Error ? err.message : fallback));
 }
 
-const http = axios.create({ baseURL: BASE_URL });
+const http = axios.create({ baseURL: BASE_URL, timeout: 10_000 });
 
 http.interceptors.request.use(config => {
-  config.headers['Authorization'] = `Bearer ${getToken()}`;
+  const token = getToken();
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
   return config;
 });
 
@@ -47,22 +49,22 @@ export interface EnvVar {
 export type ResourceType = 'Package' | 'Repository';
 
 export const api = {
-  ready: async (): Promise<boolean> => {
+  ready: async (signal?: AbortSignal): Promise<boolean> => {
     try {
-      const res = await http.get<unknown>('/api/readiness');
+      const res = await http.get<unknown>('/api/readiness', { signal });
       return res.status === 200;
     } catch {
       return false;
     }
   },
 
-  inspect: async (): Promise<Deployment[]> => {
-    const res = await http.get<Deployment[]>('/api/inspect');
+  inspect: async (signal?: AbortSignal): Promise<Deployment[]> => {
+    const res = await http.get<Deployment[]>('/api/inspect', { signal });
     return res.data;
   },
 
-  inspectByName: async (suffix: string): Promise<Deployment> => {
-    const all = await api.inspect();
+  inspectByName: async (suffix: string, signal?: AbortSignal): Promise<Deployment> => {
+    const all = await api.inspect(signal);
     const found = all.find(d => d.suffix === suffix);
     if (!found) throw new Error(`Deployment "${suffix}" not found`);
     return found;
@@ -106,8 +108,9 @@ export const api = {
     suffix: string,
     prefix: string,
     type: 'deploy' | 'job' = 'deploy',
+    signal?: AbortSignal,
   ): Promise<string> => {
-    const res = await http.post<string>('/api/deploy/logs', { suffix, prefix, type });
+    const res = await http.post<string>('/api/deploy/logs', { suffix, prefix, type }, { signal });
     return res.data;
   },
 

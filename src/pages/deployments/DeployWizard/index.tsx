@@ -65,6 +65,14 @@ export default function DeployWizardPage() {
   useEffect(() => {
     if (!file) return;
 
+    // Guard against excessively large files that could freeze the browser
+    const MAX_ZIP_BYTES = 100 * 1024 * 1024; // 100 MB
+    if (file.size > MAX_ZIP_BYTES) {
+      setDeployError(`File is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum allowed size is 100 MB.`);
+      setLoadingZip(false);
+      return;
+    }
+
     async function processZip() {
       try {
         const jszip = new JSZip();

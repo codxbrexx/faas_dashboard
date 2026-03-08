@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import type { LogEntry } from '@/types';
 import { api } from '@/api/client';
 
 interface UseLogsResult {
   logs: LogEntry[];
   loading: boolean;
+  error: string | null;
   refetch: () => void;
 }
 
@@ -75,31 +77,91 @@ function parseLogs(raw: string): LogEntry[] {
 export function useLogs(suffix: string, prefix: string, pollIntervalMs = 5000): UseLogsResult {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
+  // Counts consecutive fetch failures; used to widen the retry window
+  const failCountRef = useRef(0);
 
   useEffect(() => {
     if (!suffix || !prefix) return;
-    let cancelled = false;
+
+    const controller = new AbortController();
+    let timerId: ReturnType<typeof setTimeout> | null = null;
+
+    const scheduleNext = (failed: boolean) => {
+      if (controller.signal.aborted) return;
+
+      if (failed) {
+        // Cap at 5 doublings.
+        failCountRef.current = Math.min(failCountRef.current + 1, 5);
+      } else {
+        failCountRef.current = 0;
+      }
+
+      const delay = failed
+        ? Math.min(pollIntervalMs * 2 ** failCountRef.current, 60_000)
+        : pollIntervalMs;
+
+      timerId = setTimeout(() => {
+        if (controller.signal.aborted) return;
+        // Don't fetch while tab is hidden; visibilitychange will kick it off
+        if (!document.hidden) void doFetch();
+      }, delay);
+    };
 
     const doFetch = async () => {
       try {
-        const raw = await api.logs(suffix, prefix, 'deploy');
-        if (!cancelled) setLogs(parseLogs(raw));
-      } catch {
-        // retain stale data if logs request fails
+        const raw = await api.logs(suffix, prefix, 'deploy', controller.signal);
+        if (controller.signal.aborted) return;
+        setError(null);
+        setLogs(parseLogs(raw));
+        scheduleNext(false);
+      } catch (err) {
+        if (axios.isCancel(err)) return;
+        if (controller.signal.aborted) return;
+        // Surface error to the caller and widen retry interval
+        const msg = axios.isAxiosError(err)
+          ? (err.response?.data?.error ?? err.message ?? 'Failed to load logs.')
+          : (err instanceof Error ? err.message : 'Failed to load logs.');
+        setError(msg);
+        scheduleNext(true);
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     };
 
-    void doFetch();
-    const timer = setInterval(() => setTick(t => t + 1), pollIntervalMs);
+    // Start immediately unless the tab is already hidden
+    if (!document.hidden) {
+      void doFetch();
+    }
+
+    // Kick off a fresh fetch when the user returns to the tab
+    const onVisible = () => {
+      if (!document.hidden && !controller.signal.aborted) {
+        if (timerId !== null) {
+          clearTimeout(timerId);
+          timerId = null;
+        }
+        void doFetch();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
 
     return () => {
-      cancelled = true;
-      clearInterval(timer);
+      controller.abort();
+      if (timerId !== null) clearTimeout(timerId);
+      document.removeEventListener('visibilitychange', onVisible);
     };
   }, [suffix, prefix, pollIntervalMs, tick]);
 
-  return { logs, loading, refetch: () => setTick(t => t + 1) };
+  return {
+    logs,
+    loading,
+    error,
+    refetch: () => {
+      failCountRef.current = 0;
+      setError(null);
+      setTick(t => t + 1);
+    },
+  };
 }
