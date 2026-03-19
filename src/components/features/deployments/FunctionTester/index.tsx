@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Layers, Zap } from 'lucide-react';
+import { Layers } from 'lucide-react';
 import { env } from '@/env';
 import type { Deployment } from '@/types';
 import { useFunctionList } from './useFunctionList';
@@ -35,7 +35,6 @@ export function FunctionTester({ deployment }: FunctionTesterProps) {
       {/* Header */}
       <div className="px-5 py-3 border-b border-gray-200 bg-gray-50/60 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-2">
-          <Zap size={13} className="text-amber-500" />
           <span className="text-[11px] font-bold text-slate-600 uppercase tracking-widest">
             Exported Functions
           </span>

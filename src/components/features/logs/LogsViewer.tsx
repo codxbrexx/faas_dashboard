@@ -18,32 +18,32 @@ const LEVEL_BADGE: Record<
 > = {
   info: {
     label: 'INFO',
-    cls: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30',
+    cls: 'text-cyan-200 border-cyan-500/20',
     textCls: 'text-slate-300',
     filterCls: 'border-cyan-500/40 text-cyan-400 bg-cyan-500/10',
   },
   success: {
     label: 'OK',
-    cls: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
-    textCls: 'text-emerald-300',
+    cls: 'text-emerald-200 border-emerald-500/20',
+    textCls: 'text-slate-300',
     filterCls: 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10',
   },
   warn: {
     label: 'WARN',
-    cls: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
-    textCls: 'text-amber-200',
+    cls: 'text-amber-200 border-amber-500/20',
+    textCls: 'text-slate-300',
     filterCls: 'border-amber-500/40 text-amber-400 bg-amber-500/10',
   },
   error: {
     label: 'ERR',
-    cls: 'text-red-400 bg-red-500/15 border-red-500/30',
-    textCls: 'text-red-300',
+    cls: 'text-red-200 border-red-500/20',
+    textCls: 'text-slate-300',
     filterCls: 'border-red-500/40 text-red-400 bg-red-500/15',
   },
   http: {
     label: 'HTTP',
-    cls: 'text-violet-400 bg-violet-500/10 border-violet-500/30',
-    textCls: 'text-violet-300',
+    cls: 'text-violet-200 border-violet-500/20',
+    textCls: 'text-slate-300',
     filterCls: 'border-violet-500/40 text-violet-400 bg-violet-500/10',
   },
 };
@@ -131,14 +131,10 @@ export function LogsViewer({ logs, className, error }: LogsViewerProps) {
   }
 
   return (
-    <div className={clsx('flex flex-col bg-slate-950 w-full h-full', className)}>
+    <div className={clsx('flex flex-col bg-slate-800 w-full h-full rounded', className)}>
 
       {/* Toolbar */}
-      <div className="shrink-0 flex items-center gap-2 px-3 py-1.5 bg-slate-900 border-b border-slate-800">
-        {/* Terminal dots */}
-        <span className="w-2.5 h-2.5 rounded-full bg-red-500/60 shrink-0" />
-        <span className="w-2.5 h-2.5 rounded-full bg-amber-400/60 shrink-0" />
-        <span className="w-2.5 h-2.5 rounded-full bg-green-500/60 shrink-0" />
+      <div className="shrink-0 flex items-center gap-2 px-3 py-1.5 bg-slate-900 border-b border-slate-700">
 
         <div className="w-px h-3.5 bg-slate-800 mx-1 shrink-0" />
 
@@ -200,7 +196,7 @@ export function LogsViewer({ logs, className, error }: LogsViewerProps) {
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto custom-scrollbar relative"
+        className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent relative"
       >
         {visible.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full gap-2 text-slate-600 font-mono text-[12px]">
@@ -217,10 +213,8 @@ export function LogsViewer({ logs, className, error }: LogsViewerProps) {
                 <div
                   key={i}
                   className={clsx(
-                    'group flex items-start gap-0 transition-colors hover:bg-slate-800/60',
-                    'bg-slate-900',
-                    entry.level === 'error' && 'bg-red-950/30',
-                    entry.level === 'warn' && 'bg-amber-950/20',
+                    'group flex items-start gap-0 transition-colors hover:bg-slate-700/60',
+                    'bg-transparent'
                   )}
                 >
                   {/* Line number */}

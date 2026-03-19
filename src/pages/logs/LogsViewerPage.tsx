@@ -127,7 +127,7 @@ export default function LogsViewerPage() {
             </div>
           ) : null}
 
-          <LogsViewer logs={logs} error={logsError} className="h-full border-none" />
+          <LogsViewer logs={logs} error={logsError} className="h-full max-h-full border-none" />
         </div>
       </div>
     </div>
