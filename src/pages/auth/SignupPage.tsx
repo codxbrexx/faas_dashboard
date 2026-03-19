@@ -82,7 +82,7 @@ export default function SignupPage() {
               onChange={e => setEmail(e.target.value)}
               required
               autoComplete="email"
-              className="w-full px-0 py-2 bg-transparent border-0 border-b border-gray-300 text-gray-800 placeholder-gray-500 outline-none ring-0 focus:ring-0 focus:border-blue-500 transition-colors duration-200"
+              className="w-full auth-input transition-colors duration-200"
             />
           </div>
 
@@ -99,7 +99,7 @@ export default function SignupPage() {
               onChange={e => setAlias(e.target.value)}
               required
               autoComplete="username"
-              className="w-full px-0 py-2 bg-transparent border-0 border-b border-gray-300 text-gray-800 placeholder-gray-500 outline-none ring-0 focus:ring-0 focus:border-blue-500 transition-colors duration-200"
+              className="w-full auth-input transition-colors duration-200"
             />
           </div>
 
@@ -117,7 +117,7 @@ export default function SignupPage() {
                 onChange={e => setPassword(e.target.value)}
                 required
                 autoComplete="new-password"
-                className="w-full px-0 py-2 pr-8 bg-transparent border-0 border-b border-gray-300 text-gray-800 placeholder-gray-500 outline-none ring-0 focus:ring-0 focus:border-blue-500 transition-colors duration-200"
+                className="w-full auth-input pr-8 transition-colors duration-200"
               />
               <button
                 type="button"
@@ -145,7 +145,7 @@ export default function SignupPage() {
                 onChange={e => setConfirm(e.target.value)}
                 required
                 autoComplete="new-password"
-                className="w-full px-0 py-2 pr-8 bg-transparent border-0 border-b border-gray-300 text-gray-800 placeholder-gray-500 outline-none ring-0 focus:ring-0 focus:border-blue-500 transition-colors duration-200"
+                className="w-full auth-input pr-8 transition-colors duration-200"
               />
               <button
                 type="button"

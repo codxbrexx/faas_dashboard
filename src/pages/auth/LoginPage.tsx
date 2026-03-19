@@ -62,7 +62,7 @@ export default function LoginPage() {
                 placeholder="Email"
                 required
                 autoComplete="email"
-                className="peer w-full px-0 py-2 bg-transparent border-0 border-b border-gray-300 text-slate-800 placeholder-transparent outline-none ring-0 focus:ring-0 focus:border-blue-500 transition-colors duration-300"
+                className="peer w-full auth-input placeholder-transparent transition-colors duration-300"
               />
               <label
                 htmlFor="email"
@@ -82,7 +82,7 @@ export default function LoginPage() {
                 placeholder="Password"
                 required
                 autoComplete="current-password"
-                className="peer w-full px-0 py-2 pr-8 bg-transparent border-0 border-b border-gray-300 text-slate-800 placeholder-transparent outline-none ring-0 focus:ring-0 focus:border-blue-500 transition-colors duration-300"
+                className="peer w-full auth-input pr-8 placeholder-transparent transition-colors duration-300"
               />
               <label
                 htmlFor="password"
