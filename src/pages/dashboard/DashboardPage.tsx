@@ -1,21 +1,16 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDeployments } from '@/hooks/useDeployments';
-import { useServerStatus } from '@/hooks/useServerStatus';
 import { api } from '@/api/client';
 import type { Deployment } from '@/types';
 import {
   Plus,
-  Info,
-  WifiOff,
-  Package,
-  Code2,
   ExternalLink,
   Trash2,
-  Server,
-  Layers,
 } from 'lucide-react';
 import { Spinner } from '@/components/ui/Spinner';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { DeleteModal } from '@/components/ui/DeleteModal';
 
 // Plan config
 const PLAN_CLASSES: Record<string, { headerBg: string; plusHover: string }> = {
@@ -97,53 +92,28 @@ function LaunchpadCard({ dep, onDeploy }: { dep: Deployment; onDeploy: () => voi
 }
 
 // Empty plan slot
-function EmptyLaunchpadCard({ plan, onClick }: { plan: string; onClick: () => void }) {
+function EmptyLaunchpadCard({ plan, onClick, isAlreadyUsed }: { plan: string; onClick: () => void; isAlreadyUsed?: boolean }) {
   const { headerBg, plusHover } = getPlanClasses(plan);
+  const bgClass = isAlreadyUsed ? 'bg-gray-300' : headerBg;
+  const hoverClass = isAlreadyUsed ? '' : plusHover;
+
   return (
     <div
-      className="flex flex-col border border-dashed border-gray-300 bg-white hover:shadow-sm transition-all cursor-pointer"
-      onClick={onClick}
+      className={`flex flex-col border border-dashed ${isAlreadyUsed ? 'border-gray-200' : 'border-gray-300'} bg-white ${!isAlreadyUsed ? 'hover:shadow-sm cursor-pointer' : 'opacity-60 cursor-not-allowed'} transition-all`}
+      onClick={!isAlreadyUsed ? onClick : undefined}
     >
       <div
-        className={`flex items-center justify-between px-3 py-1.5 text-[11px] font-semibold text-white ${headerBg}`}
+        className={`flex items-center justify-between px-3 py-1.5 text-[11px] font-semibold text-white ${bgClass}`}
       >
         <span>Empty launchpad</span>
         <span className="opacity-80">{plan}</span>
       </div>
-      <DeployRow onClick={onClick} plusHover={plusHover} />
-    </div>
-  );
-}
-
-// Stat card
-interface StatCardProps {
-  icon: React.ReactNode;
-  label: string;
-  value: React.ReactNode;
-  sub: string;
-  trend?: { label: string; up?: boolean };
-}
-
-function StatCard({ icon, label, value, sub, trend }: StatCardProps) {
-  return (
-    <div className="flex items-start gap-4 bg-white border border-gray-200 px-5 py-4 flex-1 min-w-45">
-      <span className="flex items-center justify-center w-10 h-10 shrink-0 rounded-lg bg-gray-50">
-        {icon}
-      </span>
-      <div className="flex flex-col gap-0.5 min-w-0">
-        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-          {label}
-        </span>
-        <span className="text-2xl font-bold text-gray-800 leading-tight">{value}</span>
-        <span className="text-[11px] text-gray-400 leading-none">{sub}</span>
-        {trend && (
-          <span
-            className={`text-[10px] font-semibold mt-1 ${trend.up ? 'text-teal-500' : 'text-red-400'}`}
-          >
-            {trend.up ? '↑' : '↓'} {trend.label}
-          </span>
-        )}
-      </div>
+      {!isAlreadyUsed && <DeployRow onClick={onClick} plusHover={hoverClass} />}
+      {isAlreadyUsed && (
+        <div className="flex items-center justify-between px-4 py-3.5 text-gray-400">
+          <span className="text-xs font-semibold">Already in use</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -233,29 +203,23 @@ function RecentDeploymentsTable({ deployments, onDelete }: { deployments: Deploy
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { deployments, loading, refetch } = useDeployments();
-  const { online, loading: statusLoading } = useServerStatus();
 
-  const handleDelete = async (dep: Deployment) => {
-    if (!confirm(`Delete deployment "${dep.suffix}"?`)) return;
+  const [pendingDelete, setPending] = useState<Deployment | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!pendingDelete) return;
+    setDeleting(true);
     try {
-      await api.deployDelete(dep.prefix, dep.suffix, dep.version);
+      await api.deployDelete(pendingDelete.prefix, pendingDelete.suffix, pendingDelete.version);
+      setPending(null);
       refetch();
     } catch (err: unknown) {
       alert('Failed to delete: ' + (err as Error).message);
+    } finally {
+      setDeleting(false);
     }
   };
-
-  const activeDeployments = deployments.filter(d => d.status === 'ready').length;
-  const totalFunctions = deployments.reduce(
-    (acc, dep) =>
-      acc +
-      Object.values(dep.packages ?? {}).reduce(
-        (a, handles) => a + handles.reduce((b, h) => b + (h.scope?.funcs?.length ?? 0), 0),
-        0,
-      ),
-    0,
-  );
-  const emptyCount = deployments.filter(d => !d.suffix || d.status === 'create').length;
 
   // Build one slot per plan occupied slots show the real deployment, empty ones show placeholder
   const launchpadSlots = PLAN_ORDER.map(planId => {
@@ -267,103 +231,63 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className="flex flex-col gap-8">
-      {/* Stat cards */}
-      <div className="flex flex-wrap gap-4">
-        <StatCard
-          icon={
-            online ? (
-              <span className="relative flex items-center justify-center">
-                <Server size={24} className="text-gray-500" />
-                {/* <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white" /> */}
-              </span>
-            ) : (
-              <span className="relative flex items-center justify-center">
-                <WifiOff size={24} className="text-red-400" />
-              </span>
-            )
-          }
-          label="Server"
-          value={statusLoading ? <Spinner size={18} /> : online ? 'Online' : 'Offline'}
-          sub={online ? 'FaaS is responding' : 'Cannot reach server'}
+    <>
+      {/* Delete confirmation modal */}
+      {pendingDelete && (
+        <DeleteModal
+          suffix={pendingDelete.suffix}
+          deleting={deleting}
+          onConfirm={handleDelete}
+          onCancel={() => {
+            setPending(null);
+          }}
         />
-        <StatCard
-          icon={<Package size={24} className="text-gray-400" />}
-          label="Active Deployments"
-          value={loading ? <Spinner size={18} /> : activeDeployments}
-          sub={`${deployments.length} total`}
-        />
-        <StatCard
-          icon={<Code2 size={24} className="text-gray-400" />}
-          label="Functions"
-          value={loading ? <Spinner size={18} /> : totalFunctions}
-          sub="across all deployments"
-        />
-        <StatCard
-          icon={
-            <span className="relative flex items-center justify-center">
-              <Layers size={24} className="text-gray-400" />
-              {emptyCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-amber-400 rounded-full border-2 border-white flex items-center justify-center text-[7px] font-bold text-white leading-none">
-                  {emptyCount > 9 ? '9+' : emptyCount}
-                </span>
-              )}
-            </span>
-          }
-          label="Idle Slots"
-          value={loading ? <Spinner size={18} /> : emptyCount}
-          sub="empty subscriptions"
-        />
-      </div>
-
-      {/* Info bar */}
-      {emptyCount > 0 && (
-        <div className="flex items-center gap-2 py-1.5 pl-3 border-l-2 border-amber-400 bg-amber-50">
-          <Info size={13} className="text-amber-500 shrink-0" />
-          <span className="text-xs font-semibold text-amber-600">
-            You have {emptyCount} empty subscription{emptyCount !== 1 ? 's' : ''} — deploy
-            something!
-          </span>
-        </div>
       )}
 
-      {/* Loading */}
-      {loading && (
-        <div className="flex items-center gap-2 text-xs text-gray-400">
-          <Spinner size={14} />
-          <span>Fetching deployments…</span>
-        </div>
-      )}
-
-      {/* Launchpad grid always shows all plan slots */}
-      {!loading && (
-        <div className="flex flex-col gap-3">
-          <h2 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            Launchpads
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            <NewDeployCard />
-            {launchpadSlots.map(({ planId, dep }) =>
-              dep ? (
-                <LaunchpadCard
-                  key={planId}
-                  dep={dep}
-                  onDeploy={() => navigate('/deployments/new')}
-                />
-              ) : (
-                <EmptyLaunchpadCard
-                  key={planId}
-                  plan={planId}
-                  onClick={() => navigate(deployments.length > 0 ? '/deployments/new' : '/plans')}
-                />
-              ),
-            )}
+      <div className="flex flex-col gap-8">
+        {/* Loading */}
+        {loading && (
+          <div className="flex items-center gap-2 text-xs text-gray-400">
+            <Spinner size={14} />
+            <span>Fetching deployments…</span>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Recent deployments table */}
-      {!loading && deployments.length > 0 && <RecentDeploymentsTable deployments={deployments} onDelete={handleDelete} />}
-    </div>
+        {/* Launchpad grid always shows all plan slots */}
+        {!loading && (
+          <div className="flex flex-col gap-3">
+            <h2 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+              Launchpads
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              <NewDeployCard />
+              {launchpadSlots.map(({ planId, dep }) =>
+                dep ? (
+                  <LaunchpadCard
+                    key={planId}
+                    dep={dep}
+                    onDeploy={() => navigate('/deployments/new')}
+                  />
+                ) : (
+                  <EmptyLaunchpadCard
+                    key={planId}
+                    plan={planId}
+                    isAlreadyUsed={deployments.some(
+                      d =>
+                        ((d as unknown as Record<string, unknown>).plan as string | undefined) ===
+                        planId,
+                    )}
+                    onClick={() => navigate(deployments.length > 0 ? '/deployments/new' : '/plans')}
+                  />
+                ),
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Recent deployments table */}
+        {!loading && deployments.length > 0 && <RecentDeploymentsTable deployments={deployments} onDelete={setPending} />}
+      </div>
+    </>
   );
 }
