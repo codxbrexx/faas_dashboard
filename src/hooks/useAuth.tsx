@@ -32,20 +32,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return token && email ? { email } : null;
     });
 
-    const loading = false;
+    const [loading, setLoading] = useState(false);
 
     const login = useCallback(async (email: string, password: string) => {
-        const token = await api.login(email, password);
-        localStorage.setItem(TOKEN_KEY, token);
-        localStorage.setItem(EMAIL_KEY, email);
-        setUser({ email });
+        setLoading(true);
+        try {
+            const token = await api.login(email, password);
+            localStorage.setItem(TOKEN_KEY, token);
+            localStorage.setItem(EMAIL_KEY, email);
+            setUser({ email });
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
     const signup = useCallback(async (email: string, password: string, alias: string) => {
-        const token = await api.signup(email, password, alias);
-        localStorage.setItem(TOKEN_KEY, token);
-        localStorage.setItem(EMAIL_KEY, email);
-        setUser({ email });
+        setLoading(true);
+        try {
+            const token = await api.signup(email, password, alias);
+            localStorage.setItem(TOKEN_KEY, token);
+            localStorage.setItem(EMAIL_KEY, email);
+            setUser({ email });
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
     const logout = useCallback(() => {
