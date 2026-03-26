@@ -7,20 +7,26 @@ Deploy, inspect, invoke, and observe your polyglot serverless functions locallyâ
 ## Preview
 
 **Login**
-![Login](assets/login.png)
+<img width="1919" height="934" alt="image" src="https://github.com/user-attachments/assets/099ce821-7d31-4f41-a283-a27a95097df7" />
 
 **Signup**
-![Signup](assets/signup.png)
+<img width="1919" height="934" alt="image" src="https://github.com/user-attachments/assets/943ce8be-c98b-417c-85cf-4ff53a523377" />
 
 **Dashboard**
-![Dashboard](assets/dashboard.png)
+<img width="1919" height="934" alt="image" src="https://github.com/user-attachments/assets/088e2e09-eddc-4bb2-9505-62a9c551eb78" />
 
 **New Deploy Page**
-![New Deploy](assets/new_deploy.png)
+<img width="1919" height="934" alt="image" src="https://github.com/user-attachments/assets/a8779ae6-5dc9-4a05-888d-0c0eeeda8e07" />
 
 *Small Screen*
-![Small Screen](assets/small_screen.png)
+<img width="1919" height="934" alt="image" src="https://github.com/user-attachments/assets/570e8f6f-82d5-4b90-8dd6-b8543815deda" />
 
+
+**Zip Edit**
+<img width="1919" height="934" alt="image" src="https://github.com/user-attachments/assets/46c36422-cc3a-4f7e-b372-9816b7f6f9bf" />
+
+
+And others...
 
 ## Features
 
