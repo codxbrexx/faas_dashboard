@@ -94,9 +94,9 @@ export function ChatInterface() {
             >
               {msg.role === 'agent' && (
                 <img
-                src="/metacall.svg"
+                src="/logo.svg"
                 alt="MetaCall Support"
-                className="w-10 h-10 border border-slate-300 rounded-full object-contain"
+                className="w-10 h-10 border p-1 border-slate-200 rounded-full object-contain"
               />
               )}
               <div className="flex flex-col max-w-[85%]">
