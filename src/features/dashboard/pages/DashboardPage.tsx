@@ -266,18 +266,19 @@ export default function DashboardPage() {
         )}
 
         {error && (
-          <div className="flex items-center justify-between gap-3 text-xs text-red-600 animate-in fade-in slide-in-from-top-1 duration-300">
-            <div className="flex items-center gap-2">
-              <AlertTriangle size={14} />
-              <span>{error}</span>
-            </div>
+          <div className="flex items-center gap-3 text-xs text-red-600 animate-in fade-in slide-in-from-top-1 duration-300">
             <button
               onClick={() => setDeleteError(null)}
-              className="hover:text-red-800 p-1 transition-colors"
+              className="hover:text-red-800 transition-colors flex-shrink-0"
               aria-label="Clear error"
             >
               <X size={14} />
             </button>
+            <span className="text-gray-400">|</span>
+            <div className="flex items-center gap-2">
+              <AlertTriangle size={14} />
+              <span>{error}</span>
+            </div>
           </div>
         )}
 
