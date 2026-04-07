@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BotMessageSquare, X } from 'lucide-react';
+import { MessageSquare, X } from 'lucide-react';
 import { ChatInterface } from '@/features/chat/components/ChatInterface';
 import { useLocation } from 'react-router-dom';
 
@@ -18,9 +18,13 @@ export function FloatingChat() {
             {/* Subtle background glow */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 blur-2xl rounded-full translate-x-10 -translate-y-10"></div>
             <div className="flex items-center gap-2 relative z-10">
-              <BotMessageSquare size={18} className="text-blue-400" />
+              <img
+                src="/logo.svg"
+                alt="MetaCall Support"
+                className="w-8 h-8 object-contain"
+              />
               <span className="font-bold tracking-wide text-[13px] uppercase">
-                MetaCall Support
+                MetaCall Team Support
               </span>
             </div>
             <button
@@ -41,11 +45,11 @@ export function FloatingChat() {
         className={`group relative w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-transform active:scale-95 ${
           isOpen
             ? 'bg-blue-600 text-white hover:bg-blue-700'
-            : 'bg-gray-600 text-white hover:bg-gray-700'
+            : 'bg-gray-500 text-white hover:bg-gray-700'
         }`}
         aria-label="Toggle Chat"
       >
-        {isOpen ? <X size={24} /> : <BotMessageSquare size={26} strokeWidth={2} />}
+        {isOpen ? <X size={24} /> :  <MessageSquare size={24} />}
       </button>
     </div>
   );

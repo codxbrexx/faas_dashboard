@@ -59,14 +59,14 @@ function getPlanClasses(plan?: string) {
 function DeployRow({ onClick, plusHover }: { onClick: () => void; plusHover: string }) {
   return (
     <div
-      className="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 transition-colors cursor-pointer"
+      className="flex items-center justify-between px-6 py-3.5 hover:bg-gray-50 transition-colors cursor-pointer"
       onClick={onClick}
     >
-      <span className="text-sm font-medium text-gray-500">Deploy</span>
+      <span className="text-smd font-medium text-gray-500">Deploy</span>
       <span
-        className={`inline-flex items-center justify-center w-7 h-7 border border-gray-300 text-gray-400 transition-all ${plusHover}`}
+        className={`inline-flex items-center justify-center w-8 h-7 border border-gray-300 text-gray-400 transition-all ${plusHover}`}
       >
-        <Plus size={13} strokeWidth={2.5} />
+        <Plus size={20} strokeWidth={2} />
       </span>
     </div>
   );
@@ -266,18 +266,19 @@ export default function DashboardPage() {
         )}
 
         {error && (
-          <div className="flex items-center justify-between gap-3 text-xs text-red-600 animate-in fade-in slide-in-from-top-1 duration-300">
-            <div className="flex items-center gap-2">
-              <AlertTriangle size={14} />
-              <span>{error}</span>
-            </div>
+          <div className="flex items-center gap-3 text-xs text-red-600 animate-in fade-in slide-in-from-top-1 duration-300">
             <button
               onClick={() => setDeleteError(null)}
-              className="hover:text-red-800 p-1 transition-colors"
+              className="hover:text-red-800 transition-colors flex-shrink-0"
               aria-label="Clear error"
             >
               <X size={14} />
             </button>
+            <span className="text-gray-400">|</span>
+            <div className="flex items-center gap-2">
+              <AlertTriangle size={14} />
+              <span>{error}</span>
+            </div>
           </div>
         )}
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { clsx } from 'clsx';
-import { Copy, Check, ArrowDown, WrapText, AlignLeft } from 'lucide-react';
+import { Copy, Check, ArrowDown, WrapText, AlignLeft, X } from 'lucide-react';
 import type { LogEntry } from '@/shared/types';
 
 interface LogsViewerProps {
@@ -58,6 +58,7 @@ export function LogsViewer({ logs, className, error }: LogsViewerProps) {
   const [copied, setCopied] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [wrap, setWrap] = useState(false);
+  const [dismissedError, setDismissedError] = useState(false);
 
   const handleScroll = useCallback(() => {
     const el = containerRef.current;
@@ -105,9 +106,17 @@ export function LogsViewer({ logs, className, error }: LogsViewerProps) {
   if (logs.length === 0) {
     return (
       <div className={clsx('flex flex-col items-center justify-center gap-3 bg-slate-950 text-gray-300 h-full w-full', className)}>
-        {error ? (
+        {error && !dismissedError ? (
           <>
             <div className="flex items-center gap-2 px-4 py-2.5 bg-red-950/40 border border-red-800/40 rounded font-mono text-sm text-red-400">
+              <button
+                onClick={() => setDismissedError(true)}
+                className="hover:text-red-300 transition-colors flex-shrink-0"
+                title="Dismiss error"
+              >
+                <X size={14} />
+              </button>
+              <span className="text-gray-500">|</span>
               <span className="font-bold uppercase tracking-wider text-[9px] border border-red-700 px-1.5 py-0.5 rounded">ERR</span>
               <span>{error}</span>
             </div>

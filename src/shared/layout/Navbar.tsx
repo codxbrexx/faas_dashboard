@@ -39,7 +39,7 @@ export function Navbar() {
           onClick={() => navigate('/')}
           className="flex flex-col items-start gap-0.5 mt-4 cursor-pointer bg-transparent border-none p-0"
         >
-          <img src="/metacall.svg" alt="MetaCall" className="h-8 sm:h-12 w-auto" />
+          <img src="/metacall.svg" alt="MetaCall" className="h-8 sm:h-16 w-auto" />
           <span className="font-mono leading-none text-xs text-blue-500">v0.6.0</span>
         </button>
 
@@ -51,8 +51,8 @@ export function Navbar() {
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 select-none"
               title={user.email}
             >
-              <User size={12} strokeWidth={1.8} />
-              <span className="max-w-35 truncate">{user.email}</span>
+              <User size={15} strokeWidth={2.5} />
+              <span className="max-w-40 text-[0.875rem] truncate">{user.email}</span>
             </div>
           )}
 
@@ -102,9 +102,9 @@ export function Navbar() {
           <div className="flex flex-col divide-y divide-gray-100 max-w-300 mx-auto">
             {/* User email on mobile */}
             {user && (
-              <div className="flex items-center gap-2 px-5 py-3 text-xs text-gray-400 font-mono">
-                <User size={13} strokeWidth={1.8} />
-                <span className="truncate">{user.email}</span>
+              <div className="flex items-center gap-2 px-5 py-3 text-xs text-gray-500 font-mono">
+                <User size={15} strokeWidth={2.5} />
+                <span className="truncate text-[0.875rem]">{user.email}</span>
               </div>
             )}
 
@@ -116,7 +116,7 @@ export function Navbar() {
                 }}
                 className="flex items-center gap-2 px-5 py-3 text-sm text-slate-800 font-medium hover:bg-gray-50 transition-colors text-left"
               >
-                <Eye size={15} strokeWidth={1.8} />
+                <Eye size={15} strokeWidth={2.5} />
                 Deploys
               </button>
             ) : (

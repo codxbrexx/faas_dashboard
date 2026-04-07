@@ -440,21 +440,22 @@ export default function DeployWizardPage() {
             {/* Footer Action */}
             <div className="p-4 sm:p-6 border-t border-gray-200 bg-gray-50/80 mt-auto flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="flex-1 w-full">
-              {deployError && (
-                <div className="w-full max-w-5xl flex items-center justify-between text-xs text-red-600 mb-4 animate-in fade-in slide-in-from-top-2 duration-300 z-20">
-                  <div className="flex items-center gap-2">
-                    <AlertTriangle size={14} />
-                    <span>{deployError}</span>
-                  </div>
-                  <button
-                    onClick={() => setDeployError('')}
-                    className="text-red-400 hover:text-red-600 transition-colors p-1"
-                    aria-label="Clear error"
-                  >
-                    <X size={14} />
-                  </button>
+            {deployError && (
+              <div className="w-full max-w-5xl flex items-center gap-2 text-xs text-red-600 mb-4 animate-in fade-in slide-in-from-top-2 duration-300 z-20">
+                <button
+                  onClick={() => setDeployError('')}
+                  className="text-red-400 hover:text-red-600 transition-colors flex-shrink-0"
+                  aria-label="Clear error"
+                >
+                  <X size={14} />
+                </button>
+                <span className="text-gray-400">|</span>
+                <div className="flex items-center gap-2">
+                  <AlertTriangle size={14} />
+                  <span>{deployError}</span>
                 </div>
-              )}
+              </div>
+            )}
               </div>
               <button
                 onClick={handleDeploy}
