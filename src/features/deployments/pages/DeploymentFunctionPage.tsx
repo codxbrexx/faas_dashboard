@@ -5,7 +5,7 @@ import axios from 'axios';
 import { api } from '@/lib/api-client';
 import { env } from '@/app/config/env';
 import type { Deployment } from '@/shared/types';
-import { Spinner } from '@/shared/ui/Spinner';
+import { PageLoading } from '@/shared/ui/LoadingState';
 import { LanguageBadge } from '@/shared/ui/LanguageBadge';
 import { FunctionTester } from '@/features/deployments/components/FunctionTester';
 import { CopyButton } from '@/shared/ui/CopyButton';
@@ -84,14 +84,7 @@ export default function DeploymentDetailPage() {
 
   // Loading
   if (loading) {
-    return (
-      <div className="grow flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3 text-slate-400">
-          <Spinner size={28} />
-          <p className="text-sm font-medium">Loading deployment…</p>
-        </div>
-      </div>
-    );
+    return <PageLoading message="Loading deployment…" spinnerSize={28} />;
   }
 
   // Error or not found

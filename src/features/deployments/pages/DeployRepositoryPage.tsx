@@ -262,9 +262,17 @@ export default function DeployRepositoryPage() {
                 )}
 
                 {branchFetchError && !branchLoading && (
-                  <p className="text-[11px] text-amber-600 mt-0.5">
-                    ⚠ {branchFetchError} — enter branch manually.
-                  </p>
+                  <div className="flex items-center gap-2 text-xs text-amber-600 mt-2 animate-in fade-in slide-in-from-top-1 duration-300">
+                    <button
+                      onClick={() => setBranchFetchError('')}
+                      className="text-amber-500 hover:text-amber-700 transition-colors flex-shrink-0"
+                      title="Dismiss error"
+                    >
+                      <X size={14} />
+                    </button>
+                    <span className="text-gray-400">|</span>
+                    <span className="text-amber-600">⚠ {branchFetchError} — enter branch manually.</span>
+                  </div>
                 )}
               </div>
             </div>

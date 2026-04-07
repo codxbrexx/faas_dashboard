@@ -5,7 +5,7 @@ import { api } from '@/lib/api-client';
 import type { Deployment } from '@/shared/types';
 import { AlertTriangle, Plus, RefreshCw, X } from 'lucide-react';
 import { DeleteModal } from '@/shared/ui/DeleteModal';
-import { Spinner } from '@/shared/ui/Spinner';
+import { InlineLoading, LoadingOverlay } from '@/shared/ui/LoadingState';
 import { DeploymentTable } from '@/features/deployments/components/DeploymentTable';
 
 interface PendingDeploymentEntry {
@@ -259,10 +259,7 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-8">
         {/* Loading */}
         {loading && (
-          <div className="flex items-center gap-2 text-xs text-gray-400">
-            <Spinner size={14} />
-            <span>Fetching deployments…</span>
-          </div>
+          <InlineLoading message="Fetching deployments…" spinnerSize={14} />
         )}
 
         {error && (
@@ -334,11 +331,7 @@ export default function DashboardPage() {
 
             <div className="bg-white border border-gray-200 w-full relative">
               {loading && visibleDeployments.length > 0 && (
-                <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] z-10 flex items-center justify-center">
-                  <div className="bg-white border border-gray-200 shadow-lg px-4 py-3 flex items-center gap-3 font-semibold text-sm text-slate-700">
-                    <Spinner size={16} /> Syncing network...
-                  </div>
-                </div>
+                <LoadingOverlay message="Syncing network…" spinnerSize={16} />
               )}
               <DeploymentTable
                 deployments={visibleDeployments}
