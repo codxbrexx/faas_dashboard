@@ -13,7 +13,7 @@ It already covers the main developer flow: sign in, inspect deployments, deploy 
 <img width="1919" height="934" alt="Signup preview" src="https://github.com/user-attachments/assets/943ce8be-c98b-417c-85cf-4ff53a523377" />
 
 **Dashboard**  
-<img width="1919" height="934" alt="Dashboard preview" src="https://github.com/user-attachments/assets/088e2e09-eddc-4bb2-9505-62a9c551eb78" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/125aaf75-9b26-4031-86d4-1bac29a74906" />
 
 **New Deploy Page**  
 <img width="1919" height="934" alt="New deploy preview" src="https://github.com/user-attachments/assets/a8779ae6-5dc9-4a05-888d-0c0eeeda8e07" />
@@ -21,12 +21,23 @@ It already covers the main developer flow: sign in, inspect deployments, deploy 
 **Small Screen**  
 <img width="1919" height="934" alt="Mobile preview" src="https://github.com/user-attachments/assets/570e8f6f-82d5-4b90-8dd6-b8543815deda" />
 
-**Zip Edit**  
-<img width="1919" height="934" alt="Zip edit preview" src="https://github.com/user-attachments/assets/46c36422-cc3a-4f7e-b372-9816b7f6f9bf" />
+**WiZard Edit**  
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/39491a6f-58ed-4f0c-8da8-046df4b0b173" />
+
+**subscription plans**
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/0381fc5b-cf3e-4ab4-8343-9e15d2322625" />
+
+**metacall team supports**
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/bfbd2673-2128-4cc4-8459-a962bf0d991d" />
+
+**settings **
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/cfb78590-03bd-42f2-9e73-d94c17863cc2" />
+
+
 
 ## Stack
 
-- React 19
+- React
 - TypeScript
 - Vite
 - Tailwind CSS v4
