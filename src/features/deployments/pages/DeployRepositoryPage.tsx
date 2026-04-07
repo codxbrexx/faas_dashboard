@@ -438,18 +438,19 @@ export default function DeployRepositoryPage() {
 
         {/* Error banner */}
         {deployError && (
-          <div className="flex items-center justify-between text-xs text-red-600 mb-4 animate-in fade-in slide-in-from-top-2 duration-300">
-            <div className="flex items-center gap-2">
-              <AlertTriangle size={14} />
-              <span>{deployError}</span>
-            </div>
+          <div className="flex items-center gap-2 text-xs text-red-600 mb-4 animate-in fade-in slide-in-from-top-2 duration-300">
             <button
               onClick={() => setDeployError('')}
-              className="text-red-400 hover:text-red-600 transition-colors p-1"
+              className="text-red-400 hover:text-red-600 transition-colors flex-shrink-0"
               aria-label="Clear error"
             >
               <X size={14} />
             </button>
+            <span className="text-gray-400">|</span>
+            <div className="flex items-center gap-2">
+              <AlertTriangle size={14} />
+              <span>{deployError}</span>
+            </div>
           </div>
         )}
         {/*  Actions  */}

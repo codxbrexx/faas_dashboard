@@ -102,16 +102,17 @@ export default function LoginPage() {
             </div>
 
           {error && (
-            <div className="flex items-center justify-start text-xs text-red-600 animate-in fade-in slide-in-from-top-2 duration-300">
-              <X size={14} className="mt-0.5 mr-2 text-red-500" />
-              <span> {error}</span>
+            <div className="flex items-center gap-2 text-xs text-red-600 animate-in fade-in slide-in-from-top-2 duration-300">
               <button
                 type="button"
                 onClick={() => setError('')}
-                className="ml-2 hover:text-red-800 transition-colors p-1"
+                className="hover:text-red-800 transition-colors flex-shrink-0"
                 aria-label="Clear error"
               >
+                <X size={14} />
               </button>
+              <span className="text-gray-400">|</span>
+              <span>{error}</span>
             </div>
           )}
 
