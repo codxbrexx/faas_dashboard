@@ -176,14 +176,7 @@ export default function DeployWizardPage() {
         .map(r => ({ name: r.name.trim(), value: r.value }));
 
       const deployment = await api.deploy(deployName, envVars, plan || Plans.Essential, 'Package');
-      navigate('/', {
-        state: {
-          pendingDeployment: {
-            suffix: deployment.suffix,
-            startedAt: new Date().toISOString(),
-          },
-        },
-      });
+      navigate(`/deployments/${deployment.suffix}`, { replace: true });
     } catch (error) {
       console.error('Deploy failed', error);
       const err = error as { response?: { data?: string }; message?: string };

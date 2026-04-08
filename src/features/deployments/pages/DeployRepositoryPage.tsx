@@ -57,14 +57,7 @@ export default function DeployRepositoryPage() {
         .map(r => ({ name: r.name.trim(), value: r.value }));
 
       const deployment = await api.deploy(id, envVars, Plans.Essential, 'Repository');
-      navigate('/', {
-        state: {
-          pendingDeployment: {
-            suffix: deployment.suffix,
-            startedAt: new Date().toISOString(),
-          },
-        },
-      });
+      navigate(`/deployments/${deployment.suffix}`, { replace: true });
     } catch (err: unknown) {
       const error = err as { response?: { data?: string }; message?: string };
       setDeployError(error?.response?.data ?? error?.message ?? 'Failed to deploy repository.');

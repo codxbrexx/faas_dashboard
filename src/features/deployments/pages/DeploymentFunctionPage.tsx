@@ -176,7 +176,7 @@ export default function DeploymentDetailPage() {
                   </h1>
                   {/* <StatusBadge status={deployment.status === 'fail' ? 'error' : deployment.status ?? 'create'} /> */}
                 </div>
-                <div className="flex items-center gap-1.5 mt-1.5 text-[11px] text-slate-400 font-medium">
+                <div className="hidden sm:flex items-center gap-1.5 mt-1.5 text-[11px] text-slate-400 font-medium">
                   <span className="font-mono">{deployment.prefix}</span>
                   <span className="text-slate-200">·</span>
                   <span className="font-mono">{deployment.version}</span>
@@ -246,8 +246,8 @@ export default function DeploymentDetailPage() {
               ))}
             </div>
 
-            {/* Endpoints */}
-            <div className="flex flex-col gap-3">
+            {/* Endpoints (hidden on small screens to reduce clutter) */}
+            <div className="hidden md:flex flex-col gap-3">
               <SectionTitle icon={<Globe size={13} />} title="Endpoints" />
               <InfoRow label="Base HTTP URL">
                 <div className="flex items-center gap-1.5">
@@ -262,7 +262,7 @@ export default function DeploymentDetailPage() {
             </div>
 
             {/* Packages / Files */}
-            <div className="flex flex-col gap-3">
+            <div className="hidden md:flex flex-col gap-3">
               <SectionTitle icon={<Box size={13} />} title="Packages" />
               {Object.entries(deployment.packages ?? {}).length === 0 ? (
                  <div className="p-3 bg-slate-100/50 rounded border border-slate-200">
@@ -289,7 +289,7 @@ export default function DeploymentDetailPage() {
             </div>
 
             {/* Configuration */}
-            <div className="flex flex-col gap-3">
+            <div className="hidden md:flex flex-col gap-3">
               <SectionTitle icon={<Server size={13} />} title="Configuration" />
 
               {(deployment.ports || []).length > 0 && (

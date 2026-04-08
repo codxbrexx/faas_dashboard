@@ -5,7 +5,7 @@ export default function NotFoundPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center justify-center min-h-[70vh] px-4 bg-white">
+    <div className="flex items-center justify-center min-h-[calc(70vh-10px)] sm:min-h-[70vh] px-4 bg-white">
       <div className="w-full max-w-3xl flex flex-col items-center gap-8">
         <div className="flex items-center gap-2 text-slate-900 font-semibold text-lg">
           <img src="/logo.svg" alt="MetaCall Hub logo" className="h-14 w-14 object-contain" />
