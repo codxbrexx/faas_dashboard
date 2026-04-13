@@ -59,7 +59,7 @@ export default function PlanPage() {
   };
 
   return (
-    <div className="grow flex flex-col items-center justify-start p-4 sm:p-10 animate-in fade-in duration-500 relative">
+    <div className="grow flex flex-col items-center justify-start p-4 sm:p-10 sm:pt-1 animate-in fade-in duration-500 relative">
       <div className="w-full max-w-5xl mt-6 relative">
         {/* Back / Close Button */}
         <div className="flex justify-end w-full mb-8">

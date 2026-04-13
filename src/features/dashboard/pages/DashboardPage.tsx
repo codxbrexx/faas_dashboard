@@ -7,7 +7,13 @@ import { AlertTriangle, Plus, RefreshCw, X } from 'lucide-react';
 import { DeleteModal } from '@/shared/ui/DeleteModal';
 import { InlineLoading, LoadingOverlay } from '@/shared/ui/LoadingState';
 import { DeploymentTable } from '@/features/deployments/components/DeploymentTable';
-import { getPlanLabel, normalizePlan, writeStoredPlan } from '@/shared/lib/plan';
+import {
+  FREE_PLAN,
+  getPlanLabel,
+  normalizePlan,
+  resolveDeploymentPlan,
+  writeStoredPlan,
+} from '@/shared/lib/plan';
 import { Plans } from '@metacall/protocol/plan';
 
 interface PendingDeploymentEntry {
@@ -85,13 +91,16 @@ function NewDeployCard() {
   return (
     <div
       className="flex flex-col cursor-pointer border border-gray-200 bg-white hover:shadow-sm transition-all"
-      onClick={() => navigate('/deployments/new')}
+      onClick={() => navigate('/deployments/new', { state: { plan: FREE_PLAN } })}
     >
       <div className="flex items-center justify-between px-3 py-1.5 text-[11px] font-semibold text-white bg-gray-500">
         <span>New Deploy</span>
         <span className="opacity-80">Free Plan</span>
       </div>
-      <DeployRow onClick={() => navigate('/deployments/new')} plusHover={plusHover} />
+      <DeployRow
+        onClick={() => navigate('/deployments/new', { state: { plan: FREE_PLAN } })}
+        plusHover={plusHover}
+      />
     </div>
   );
 }
@@ -99,7 +108,10 @@ function NewDeployCard() {
 // Launchpad card (active deployment)
 function LaunchpadCard({ dep, onDeploy }: { dep: Deployment; onDeploy: () => void }) {
   const navigate = useNavigate();
-  const plan = normalizePlan((dep as unknown as Record<string, unknown>).plan as string | undefined);
+  const plan = resolveDeploymentPlan({
+    suffix: dep.suffix,
+    plan: (dep as unknown as Record<string, unknown>).plan as string | undefined,
+  });
   const { headerBg, plusHover } = getPlanClasses(plan);
   return (
     <div

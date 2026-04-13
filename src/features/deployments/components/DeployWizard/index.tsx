@@ -9,7 +9,14 @@ import { TreeNodeView } from './TreeNodeView';
 import { TreeCheckbox } from './TreeCheckbox';
 import { EditorView } from './EditorView';
 import { type McConfig, buildJson } from './metacallConfig';
-import { getPlanLabel, normalizePlan, readStoredPlan, writeStoredPlan } from '@/shared/lib/plan';
+import {
+  getPlanLabel,
+  normalizePlan,
+  readStoredPlan,
+  toDeployPlan,
+  writeDeploymentPlan,
+  writeStoredPlan,
+} from '@/shared/lib/plan';
 
 interface EnvRow {
   id: number;
@@ -182,7 +189,8 @@ export default function DeployWizardPage() {
         .filter(r => r.name.trim())
         .map(r => ({ name: r.name.trim(), value: r.value }));
 
-      const deployment = await api.deploy(deployName, envVars, plan, 'Package');
+      const deployment = await api.deploy(deployName, envVars, toDeployPlan(plan), 'Package');
+      writeDeploymentPlan(deployment.suffix, plan);
       navigate(`/deployments/${deployment.suffix}`, { replace: true });
     } catch (error) {
       console.error('Deploy failed', error);
@@ -356,7 +364,7 @@ export default function DeployWizardPage() {
                     onClick={() => setEnvRows([...envRows, { id: nextEnvId, name: '', value: '' }])}
                     className="text-[12px] font-semibold text-blue-600 flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-50 cursor-pointer rounded-md transition-colors border border-blue-100"
                   >
-                    <Plus size={13} strokeWidth={2.5} /> Add Variable
+                    <Plus size={13} strokeWidth={2.5} /> Add Var
                   </button>
                 </div>
 

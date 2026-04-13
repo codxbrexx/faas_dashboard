@@ -10,7 +10,7 @@ import { LanguageBadge } from '@/shared/ui/LanguageBadge';
 import { FunctionTester } from '@/features/deployments/components/FunctionTester';
 import { CopyButton } from '@/shared/ui/CopyButton';
 import { DeleteModal } from '@/shared/ui/DeleteModal';
-import { getPlanLabel } from '@/shared/lib/plan';
+import { getPlanLabel, resolveDeploymentPlan } from '@/shared/lib/plan';
 
 // Helper components
 function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
@@ -92,7 +92,7 @@ export default function DeploymentDetailPage() {
     const isNetwork = Boolean(error?.toLowerCase().includes('unable to reach'));
     return (
       <div className="grow flex items-center justify-center p-6">
-        <div className="bg-white border border-slate-200 shadow-sm p-8 max-w-md w-full text-center flex flex-col items-center gap-4">
+        <div className="bg-white  max-w-md w-full text-center flex flex-col items-center gap-4">
           <div className="p-3 bg-red-50 rounded-full">
             <Box size={22} className="text-red-400" />
           </div>
@@ -106,7 +106,7 @@ export default function DeploymentDetailPage() {
             onClick={() => navigate('/')}
             className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white text-sm font-semibold hover:bg-slate-700 transition-colors"
           >
-            <ArrowLeft size={14} /> Back to Hub
+            <ArrowLeft size={14} /> Back to Dashboard
           </button>
         </div>
       </div>
@@ -117,7 +117,10 @@ export default function DeploymentDetailPage() {
   const baseUrl = env.FAAS_URL;
   const invokePath = `${baseUrl}/${deployment.prefix}/${deployment.suffix}/${deployment.version}/call`;
   const deploymentPlan = getPlanLabel(
-    (deployment as unknown as Record<string, unknown>).plan as string | undefined,
+    resolveDeploymentPlan({
+      suffix: deployment.suffix,
+      plan: (deployment as unknown as Record<string, unknown>).plan as string | undefined,
+    }),
   );
   const totalFns = Object.values(deployment.packages ?? {}).reduce(
     (acc, handles) => acc + handles.reduce((a, h) => a + (h.scope?.funcs?.length ?? 0), 0),

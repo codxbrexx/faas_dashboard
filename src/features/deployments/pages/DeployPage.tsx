@@ -8,7 +8,12 @@ import {
   FolderSync,
   GitBranch,
 } from 'lucide-react';
-import { normalizePlan, getPlanLabel, readStoredPlan, writeStoredPlan } from '@/shared/lib/plan';
+import {
+  getPlanLabel,
+  normalizePlan,
+  readStoredPlan,
+  writeStoredPlan,
+} from '@/shared/lib/plan';
 
 export default function DeployHubPage() {
   const navigate = useNavigate();
@@ -44,15 +49,14 @@ export default function DeployHubPage() {
 
   {/* we make  also deployment page for small devices first, so we can hide some content on mobile for better UX and user friendly experience, and show more details on desktop */}
   return (
-    <div className="grow flex flex-col items-center justify-start p-6 pt-20 relative overflow-hidden animate-in fade-in duration-500 bg-white">
+    <div className="grow flex flex-col items-center justify-start p-6 pt-12 relative overflow-hidden animate-in fade-in duration-500 bg-white">
       <div className="max-w-4xl w-full z-10 flex flex-col gap-10">
-        <div className="text-center mb-6">
+        <div className="text-center max-w-2xl mx-auto">
           <h1 className="text-[28px] font-[500] text-slate-900 mb-3 tracking-tight">
             MetaCall Deployment
           </h1>
           <p className="text-slate-500">Choose how you want to deploy your function</p>
           <div className="mt-4 inline-flex items-center gap-2 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600">
-            <span>Current launchpad plan</span>
             <span className="text-[--color-primary]">{getPlanLabel(plan)}</span>
           </div>
         </div>

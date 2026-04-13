@@ -18,7 +18,14 @@ import {
 } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import { Spinner } from '@/shared/ui/Spinner';
-import { getPlanLabel, normalizePlan, readStoredPlan, writeStoredPlan } from '@/shared/lib/plan';
+import {
+  getPlanLabel,
+  normalizePlan,
+  readStoredPlan,
+  toDeployPlan,
+  writeDeploymentPlan,
+  writeStoredPlan,
+} from '@/shared/lib/plan';
 
 interface EnvRow {
   id: number;
@@ -65,7 +72,8 @@ export default function DeployRepositoryPage() {
         .filter(r => r.name.trim())
         .map(r => ({ name: r.name.trim(), value: r.value }));
 
-      const deployment = await api.deploy(id, envVars, plan, 'Repository');
+      const deployment = await api.deploy(id, envVars, toDeployPlan(plan), 'Repository');
+      writeDeploymentPlan(deployment.suffix, plan);
       navigate(`/deployments/${deployment.suffix}`, { replace: true });
     } catch (err: unknown) {
       const error = err as { response?: { data?: string }; message?: string };
@@ -337,7 +345,7 @@ export default function DeployRepositoryPage() {
               className="flex items-center gap-1.5 text-[11px] font-bold text-blue-500 hover:text-blue-600 uppercase tracking-wider transition-colors cursor-pointer shrink-0 ml-3"
             >
               <Plus size={13} strokeWidth={3} />
-              <span className="hidden sm:inline">Add Variable</span>
+              <span className="hidden sm:inline">Add Var</span>
               <span className="sm:hidden">Add</span>
             </button>
           </div>
