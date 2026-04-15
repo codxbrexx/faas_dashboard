@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   X,
   GitBranch,
@@ -15,10 +15,18 @@ import {
   RefreshCw,
   Eye,
   EyeOff,
+  AlertCircle,
 } from 'lucide-react';
 import { api } from '@/lib/api-client';
-import { Plans } from '@metacall/protocol/plan';
 import { Spinner } from '@/shared/ui/Spinner';
+import {
+  getPlanLabel,
+  normalizePlan,
+  readStoredPlan,
+  toDeployPlan,
+  writeDeploymentPlan,
+  writeStoredPlan,
+} from '@/shared/lib/plan';
 
 interface EnvRow {
   id: number;
@@ -28,6 +36,11 @@ interface EnvRow {
 
 export default function DeployRepositoryPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const plan = normalizePlan(
+    (location.state as { plan?: string } | null)?.plan ?? searchParams.get('plan') ?? readStoredPlan(),
+  );
 
   const [repositoryUrl, setRepositoryUrl] = useState('');
   const [branchName, setBranchName] = useState('');
@@ -40,7 +53,25 @@ export default function DeployRepositoryPage() {
   const [deployError, setDeployError] = useState('');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  useEffect(() => {
+    writeStoredPlan(plan);
+  }, [plan]);
+
+  // Strict plan validation - redirect if no plan
+  useEffect(() => {
+    if (!plan || plan === '') {
+      navigate('/plans', { replace: true });
+    }
+  }, [plan, navigate]);
+
   const handleDeploy = async () => {
+    // Check if plan is selected
+    if (!plan || plan === '') {
+      // Redirect to plan selection page
+      navigate('/plans', { replace: true });
+      return;
+    }
+
     if (!repositoryUrl.trim()) {
       setDeployError('Repository URL is required.');
       return;
@@ -56,15 +87,9 @@ export default function DeployRepositoryPage() {
         .filter(r => r.name.trim())
         .map(r => ({ name: r.name.trim(), value: r.value }));
 
-      const deployment = await api.deploy(id, envVars, Plans.Essential, 'Repository');
-      navigate('/', {
-        state: {
-          pendingDeployment: {
-            suffix: deployment.suffix,
-            startedAt: new Date().toISOString(),
-          },
-        },
-      });
+      const deployment = await api.deploy(id, envVars, toDeployPlan(plan), 'Repository');
+      writeDeploymentPlan(deployment.suffix, plan);
+      navigate(`/deployments/${deployment.suffix}`, { replace: true });
     } catch (err: unknown) {
       const error = err as { response?: { data?: string }; message?: string };
       setDeployError(error?.response?.data ?? error?.message ?? 'Failed to deploy repository.');
@@ -167,7 +192,7 @@ export default function DeployRepositoryPage() {
           >
             <ArrowLeft size={15} />
           </button>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-1">
             <div className="w-9 h-9 flex items-center justify-center bg-white">
               <FolderSync size={18} className="text-gray-500" strokeWidth={1.5} />
             </div>
@@ -177,6 +202,9 @@ export default function DeployRepositoryPage() {
               </h1>
               <p className="hidden sm:block text-xs text-slate-500 mt-0.5">
                 Import a Git repository and deploy it as a FaaS function
+              </p>
+              <p className="mt-1 text-[11px] font-semibold text-slate-500">
+                Active plan: <span className={plan ? 'text-blue-600' : 'text-red-500'}>{plan ? getPlanLabel(plan) : 'No plan selected'}</span>
               </p>
             </div>
           </div>
@@ -465,8 +493,9 @@ export default function DeployRepositoryPage() {
 
           <button
             onClick={handleDeploy}
-            disabled={deploying || !repositoryUrl.trim()}
+            disabled={deploying || !repositoryUrl.trim() || !plan}
             className="flex items-center justify-center gap-2 px-8 py-2.5  text-black border text-sm font-bold hover:bg-gray-600 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            title={!plan ? 'Select a plan first to deploy' : !repositoryUrl.trim() ? 'Enter repository URL to deploy' : ''}
           >
             {deploying && <Spinner size={14} />}
             <span className="sm:hidden">{deploying ? 'Deploying…' : 'Deploy'}</span>
